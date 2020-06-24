@@ -1,4 +1,4 @@
-use raytracer::vec3::Vec3;
+use raytracer::vector::Vec3;
 use raytracer::ray::Ray;
 
 fn write_color(color: Vec3) {

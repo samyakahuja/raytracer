@@ -13,6 +13,10 @@ impl Vec3 {
         Self { x, y, z }
     }
 
+    pub fn zero() -> Self {
+        Self::new(0.0, 0.0, 0.0)
+    }
+
     pub fn length(&self) -> f64 {
         f64::sqrt(self.dot(&self))
     }
@@ -25,11 +29,11 @@ impl Vec3 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    pub fn cross(v1: Self, v2: &Self) -> Self {
+    pub fn cross(&self, other: &Self) -> Self {
         Self {
-            x: v1.y * v2.z - v1.z * v2.y,
-            y: v1.z * v2.x - v1.x * v2.z,
-            z: v1.x * v2.y - v1.y * v2.x,
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x,
         }
     }
 }
@@ -49,11 +53,11 @@ impl Neg for Vec3 {
 impl Add for Vec3 {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
+    fn add(self, rhs: Self) -> Self {
         Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
         }
     }
 }
@@ -61,11 +65,11 @@ impl Add for Vec3 {
 impl Sub for Vec3 {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
+    fn sub(self, rhs: Self) -> Self {
         Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
         }
     }
 }
