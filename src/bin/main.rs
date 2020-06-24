@@ -12,6 +12,11 @@ fn write_color(color: Vec3) {
 }
 
 fn ray_color(ray: &Ray) -> Vec3 {
+    // hard-coded sphere
+    if hit_sphere(&Vec3::new(0.0, 0.0, -1.0), 0.5, ray) {
+        return Vec3::new(1.0, 0.0, 0.0);
+    }
+
     let unit_direction = Vec3::unit_vector(ray.direction);
     // 0.0 <= t <= 1.0
     let t = 0.5 * (unit_direction.y + 1.0);
@@ -19,9 +24,18 @@ fn ray_color(ray: &Ray) -> Vec3 {
     (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
 }
 
+fn hit_sphere(center: &Vec3, radius: f64, ray: &Ray) -> bool {
+    let oc = ray.origin - center;
+    let a = ray.direction.dot(&ray.direction);
+    let b = 2.0 * oc.dot(&ray.direction);
+    let c = oc.dot(&oc) - radius * radius;
+    let discriminant = b * b - 4.0 * a * c;
+    discriminant > 0.0
+}
+
 fn main() {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const WIDTH: i32 = 384;
+    const WIDTH: i32 = 800;
     const HEIGHT: i32 = (WIDTH as f64 / ASPECT_RATIO as f64) as i32;
 
     // PP3 file header
@@ -33,7 +47,7 @@ fn main() {
     // distance between the projection point and the projection plane
     let focal_length: f64 = 1.0;
 
-    let origin = Vec3::new(0.0, 0.0, 0.0);
+    let origin = Vec3::zero();
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);

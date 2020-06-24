@@ -39,10 +39,10 @@ impl Vec3 {
 }
 
 impl Neg for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
-    fn neg(self) -> Self {
-        Self {
+    fn neg(self) -> Vec3 {
+        Vec3 {
             x: -self.x,
             y: -self.y,
             z: -self.z,
@@ -51,10 +51,46 @@ impl Neg for Vec3 {
 }
 
 impl Add for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
-    fn add(self, rhs: Self) -> Self {
-        Self {
+    fn add(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl<'a> Add<Vec3> for &'a Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl<'b> Add<&'b Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: &'b Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl<'a, 'b> Add<&'b Vec3> for &'a Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: &'b Vec3) -> Vec3 {
+        Vec3 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
@@ -63,10 +99,46 @@ impl Add for Vec3 {
 }
 
 impl Sub for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
-    fn sub(self, rhs: Self) -> Self {
-        Self {
+    fn sub(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl<'a> Sub<Vec3> for &'a Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl<'b> Sub<&'b Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: &'b Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl<'a, 'b> Sub<&'b Vec3> for &'a Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: &'b Vec3) -> Vec3 {
+        Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
@@ -75,10 +147,10 @@ impl Sub for Vec3 {
 }
 
 impl Mul for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
-    fn mul(self, rhs: Self) -> Self {
-        Self {
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
             z: self.z * rhs.z,
@@ -88,10 +160,10 @@ impl Mul for Vec3 {
 
 // vec3 * scalar
 impl Mul<f64> for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        Self {
+        Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
@@ -113,10 +185,10 @@ impl Mul<Vec3> for f64 {
 }
 
 impl Div for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
-    fn div(self, rhs: Self) -> Self {
-        Self {
+    fn div(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
             z: self.z / rhs.z,
@@ -125,10 +197,10 @@ impl Div for Vec3 {
 }
 
 impl Div<f64> for Vec3 {
-    type Output = Self;
+    type Output = Vec3;
 
     fn div(self, rhs: f64) -> Self::Output {
-        Self {
+        Vec3 {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
@@ -162,6 +234,9 @@ mod tests {
         let v3 = Vec3::new(4.0, 4.0, 4.0);
 
         assert_eq!(v1 + v2, v3);
+        assert_eq!(&v1 + v2, v3);
+        assert_eq!(v1 + &v2, v3);
+        assert_eq!(&v1 + &v2, v3);
     }
 
     #[test]
@@ -171,6 +246,9 @@ mod tests {
         let v3 = Vec3::new(-4.0, 2.0, 0.0);
 
         assert_eq!(v1 - v2, v3);
+        assert_eq!(&v1 - v2, v3);
+        assert_eq!(v1 - &v2, v3);
+        assert_eq!(&v1 - &v2, v3);
     }
 
     #[test]
