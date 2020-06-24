@@ -1,5 +1,7 @@
 use raytracer::vector::Vec3;
 use raytracer::ray::Ray;
+use raytracer::sphere::Sphere;
+use raytracer::hittable::{Hittable, HittableList};
 
 fn write_color(color: Vec3) {
     let color = 255.999 * color;
@@ -11,34 +13,16 @@ fn write_color(color: Vec3) {
     );
 }
 
-fn ray_color(ray: &Ray) -> Vec3 {
-    // hard-coded sphere
-    let sphere_center = Vec3::new(0.0, 0.0, -1.0);
-    if let Some(t) = hit_sphere(&sphere_center, 0.5, ray) {
-        // the normal unit vector for any visible point on the sphere
-        let n = Vec3::unit_vector(ray.point_at_parameter(t) - sphere_center);
-        // map n to be between 0 and 1 and use it as color at that point
-        return 0.5 * Vec3::new(n.x + 1.0, n.y + 1.0, n.z + 1.0);
-    }
-
-    let unit_direction = Vec3::unit_vector(ray.direction);
-    // 0.0 <= t <= 1.0
-    let t = 0.5 * (unit_direction.y + 1.0);
-    // linear interpolation between white and some bluish color
-    (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
-}
-
-// point of sphere-ray intersection
-fn hit_sphere(center: &Vec3, radius: f64, ray: &Ray) -> Option<f64> {
-    let oc = ray.origin - center;
-    let a = ray.direction.dot(&ray.direction);
-    let half_b = oc.dot(&ray.direction);
-    let c = oc.dot(&oc) - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-    if discriminant < 0.0 {
-        None
+fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
+    if let Some(rec) = world.hit(ray, 0.0, f64::MAX) {
+        // map the normal to be between 0 and 1 and use it as color at that point
+        0.5 * (rec.normal + Vec3::new(1.0, 1.0, 1.0))
     } else {
-        Some((-half_b - f64::sqrt(discriminant)) / a)
+        let unit_direction = Vec3::unit_vector(ray.direction);
+        // 0.0 <= t <= 1.0
+        let t = 0.5 * (unit_direction.y + 1.0);
+        // linear interpolation between white and some bluish color
+        (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
     }
 }
 
@@ -61,6 +45,11 @@ fn main() {
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
 
+    let world = HittableList::new(vec![
+        Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
+        Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
+    ]);
+
     for j in (0..HEIGHT).rev() {
         eprintln!("\rScanlines remaining: {}", j);
         for i in 0..WIDTH {
@@ -68,7 +57,7 @@ fn main() {
             let v = j as f64 / (HEIGHT - 1) as f64;
             // start traversing at lower_left_corner
             let ray = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-            let col = ray_color(&ray);
+            let col = ray_color(&ray, &world);
             write_color(col);
         }
     }
