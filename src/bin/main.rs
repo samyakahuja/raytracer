@@ -35,7 +35,7 @@ fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
 
 fn main() {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    const WIDTH: i32 = 320;
+    const WIDTH: i32 = 800;
     const HEIGHT: i32 = (WIDTH as f64 / ASPECT_RATIO as f64) as i32;
     const SAMPLES_PER_PIXEL: u32 = 100;
 
