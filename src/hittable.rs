@@ -6,6 +6,7 @@ pub struct HitRecord {
     pub normal: Vec3,
     /// point on the ray where it hits the surface.
     pub p: Vec3,
+    /// parameter of the ray where it hits the surface.
     pub t: f64,
 }
 
